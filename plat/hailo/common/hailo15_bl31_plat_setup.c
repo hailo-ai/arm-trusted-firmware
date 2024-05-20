@@ -17,6 +17,11 @@ static unsigned int mpidr_to_core_pos(u_register_t mpidr)
 	return plat_core_pos_by_mpidr(mpidr);
 }
 
+void hailo_gic_cpuif_disable(void)
+{
+	gicv3_cpuif_disable(plat_my_core_pos());
+}
+
 static const gicv3_driver_data_t plat_gic_data = {
 	.gicd_base = GICD_BASE,
 	.gicr_base = GICR_BASE,
@@ -44,6 +49,7 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 
 const mmap_region_t plat_regions[] = {
 	MAP_REGION_FLAT(UART1_BASE, PAGE_SIZE, MT_DEVICE | MT_RW | MT_SECURE),
+	MAP_REGION_FLAT(HAILO_MAILBOX_BASE, PAGE_SIZE, MT_DEVICE | MT_RW | MT_SECURE),
 	MAP_REGION_FLAT(GICD_BASE, GICD_SIZE, MT_DEVICE | MT_RW | MT_SECURE),
 	MAP_REGION_FLAT(GICR_BASE, GICR_SIZE, MT_DEVICE | MT_RW | MT_SECURE),
 	MAP_REGION_FLAT(PLAT_CPU_RELEASE_ADDR, PAGE_SIZE, MT_DEVICE | MT_RW | MT_SECURE),

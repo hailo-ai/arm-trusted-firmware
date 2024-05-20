@@ -2,6 +2,10 @@
 #define PLAT_PRIVATE_H
 
 void hailo15_gic_my_core_init(void);
+void hailo_gic_cpuif_disable(void);
+void hailo_scmi_init(void);
+void __dead2 hailo_scmi_sys_shutdown(void);
+void __dead2 hailo_scmi_sys_reboot(void);
 
 extern volatile uint64_t * const secondary_release_addresses;
 

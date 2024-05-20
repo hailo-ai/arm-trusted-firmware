@@ -19,6 +19,7 @@ BL31_SOURCES += plat/hailo/common/hailo15_helpers.S \
 		plat/hailo/common/hailo15_topology.c \
 		plat/hailo/common/hailo15_psci.c \
 		plat/hailo/common/hailo15_bl31_plat_setup.c \
+		plat/hailo/common/hailo15_scmi.c \
 		plat/common/plat_psci_common.c \
 		plat/common/plat_gicv3.c \
 		${GICV3_SOURCES} \
