@@ -8,10 +8,8 @@ pipelines:
             - MERGE_MESSAGE=`git log --format=%B -n 1 $BITBUCKET_COMMIT`
             - MERGE_MESSAGE="${MERGE_MESSAGE//\"/\'}"
             - echo $MERGE_MESSAGE
-            - if [[ $MERGE_MESSAGE == *"[UPDATE_REV]"* ]]; then
-            -   echo "The string [UPDATE_REV] is present."
-            - else
-            -   echo "The string [UPDATE_REV] is not present."
+            - if [[ $MERGE_MESSAGE == *"[NO_UPDATE_REV]"* ]]; then
+            -   echo "The string [NO_UPDATE_REV] is present."
             -   exit 0
             - fi
             - pipe: atlassian/trigger-pipeline:5.1.0

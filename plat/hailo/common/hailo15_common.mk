@@ -29,4 +29,5 @@ BL31_SOURCES += plat/hailo/common/hailo15_helpers.S \
 		drivers/ti/uart/aarch64/16550_console.S \
 		drivers/arm/css/scmi/scmi_common.c \
 		drivers/arm/css/scmi/scmi_pwr_dmn_proto.c \
-		drivers/arm/css/scmi/scmi_sys_pwr_proto.c
+		drivers/arm/css/scmi/scmi_sys_pwr_proto.c \
+		common/desc_image_load.c

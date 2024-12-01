@@ -1,5 +1,6 @@
 #include <common/debug.h>
 #include <common/bl_common.h>
+#include <common/desc_image_load.h>
 #include <platform_def.h>
 #include <drivers/ti/uart/uart_16550.h>
 #include <drivers/arm/gicv3.h>
@@ -36,13 +37,36 @@ volatile uint64_t * const cpu_release_succeeded = (uint64_t *)CPU_RELEASE_SUCCES
 
 void plat_secondary_cpus_bl31_entry(void);
 
+static unsigned long plat_get_image_offset(u_register_t arg0)
+{
+	entry_point_info_t bl32_ep_info = {0};
+	entry_point_info_t bl33_ep_info = {0};
+
+	// for cases where TF-A is the first AP image running, there will not be any arguments
+	// so we return the default offset
+	if (arg0 == 0) {
+		return DEFAULT_PLAT_NS_IMAGE_OFFSET;
+	}
+
+	bl31_params_parse_helper(arg0, &bl32_ep_info, &bl33_ep_info);
+	if (bl33_ep_info.pc == 0) {
+		return DEFAULT_PLAT_NS_IMAGE_OFFSET;
+	}
+	return bl33_ep_info.pc;
+}
+
 void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 				u_register_t arg2, u_register_t arg3)
 {
 	console_16550_register(UART1_BASE, UART_CLOCK, UART_BAUDRATE, &console);
 
-	bl33_image_ep_info.pc = PLAT_NS_IMAGE_OFFSET;
+	bl33_image_ep_info.pc = plat_get_image_offset(arg0);
 	bl33_image_ep_info.spsr = SPSR_64(MODE_EL1, MODE_SP_ELX, DISABLE_ALL_EXCEPTIONS);
+
+	/* forward devicetree arg from SPL.
+	   u-boot proper does not care about the arguments (save_boot_params is empty for Hailo machine),
+	   and when booting direct-to-linux (u-boot spl falcon mode) the kernel needs the devicetree argument. */
+	bl33_image_ep_info.args.arg0 = arg1;
 
 	SET_SECURITY_STATE(bl33_image_ep_info.h.attr, NON_SECURE);
 }
