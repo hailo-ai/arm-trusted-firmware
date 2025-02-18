@@ -16,8 +16,12 @@
 
 #ifdef HAILO_FPGA
 #define PLATFORM_CORE_COUNT	1
-#else
+#elif defined(HAILO15) || defined(HAILO15L)
 #define PLATFORM_CORE_COUNT	4
+#elif defined(HAILO10H2)
+#define PLATFORM_CORE_COUNT	2
+#else
+#    error "Unknown Hailo platform"
 #endif
 
 #define HAILO_MAX_CORE_COUNT	4

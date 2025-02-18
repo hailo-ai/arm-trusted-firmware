@@ -1,0 +1,23 @@
+# this is the default configuration for the build.sh script
+# to change the configuration simply do:
+#    cp build.cfg.default build.cfg
+# and edit build.cfg
+#
+
+# toolchain environment setup path
+TOOLCHAIN="/opt/poky/4.0.2/environment-setup-armv8a-poky-linux"
+
+# set to 1 to enable debug
+TFA_DEBUG="0"
+
+# Log levels are defined in include/common/debug.h: INFO -> 40
+LOG_LEVEL="40"
+
+# set the DEPLOY_DIR into which we deploy the directory
+# by default use the TFTP directory
+source /etc/default/tftpd-hpa
+DEPLOY_DIR=${TFTP_DIRECTORY}
+
+# by default we infer the platform (hailo15 / hailo15l / hailo10h2) from the content of DEPLOY_DIR
+# however setting it here is also supported. uncomment the following line:
+#TFA_PLATFORM="hailo15"
