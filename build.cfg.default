@@ -18,6 +18,6 @@ LOG_LEVEL="40"
 source /etc/default/tftpd-hpa
 DEPLOY_DIR=${TFTP_DIRECTORY}
 
-# by default we infer the platform (hailo15 / hailo15l / hailo10h2) from the content of DEPLOY_DIR
+# by default we infer the platform (hailo15 / hailo15l / hailo12l) from the content of DEPLOY_DIR
 # however setting it here is also supported. uncomment the following line:
 #TFA_PLATFORM="hailo15"

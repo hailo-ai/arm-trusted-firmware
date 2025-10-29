@@ -25,8 +25,8 @@ extract_plat() {
         echo "hailo15l"
     elif [[ $name == *hailo15* ]]; then
         echo "hailo15"
-    elif [[ $name == *hailo10h2* ]]; then
-        echo "hailo10h2"
+    elif [[ $name == *hailo12l* ]]; then
+        echo "hailo12l"
     else
         echo "Unknown platform!"
         exit 1
