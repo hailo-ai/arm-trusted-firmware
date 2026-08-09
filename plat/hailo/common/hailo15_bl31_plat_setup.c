@@ -1,5 +1,6 @@
 #include <common/debug.h>
 #include <common/bl_common.h>
+#include <drivers/console.h>
 #include <common/desc_image_load.h>
 #include <platform_def.h>
 #include <drivers/ti/uart/uart_16550.h>
@@ -16,6 +17,11 @@ static uintptr_t rdistif_base_addrs[PLATFORM_CORE_COUNT];
 static unsigned int mpidr_to_core_pos(u_register_t mpidr)
 {
 	return plat_core_pos_by_mpidr(mpidr);
+}
+
+void hailo_gic_cpuif_enable(void)
+{
+	gicv3_cpuif_enable(plat_my_core_pos());
 }
 
 void hailo_gic_cpuif_disable(void)
@@ -59,6 +65,11 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 				u_register_t arg2, u_register_t arg3)
 {
 	console_16550_register(UART1_BASE, UART_CLOCK, UART_BAUDRATE, &console);
+#if DEBUG
+	/* In debug builds keep the console active at runtime too. */
+	console_set_scope(&console,
+			  CONSOLE_FLAG_BOOT | CONSOLE_FLAG_RUNTIME | CONSOLE_FLAG_CRASH);
+#endif
 
 	bl33_image_ep_info.pc = plat_get_image_offset(arg0);
 	bl33_image_ep_info.spsr = SPSR_64(MODE_EL1, MODE_SP_ELX, DISABLE_ALL_EXCEPTIONS);
@@ -76,7 +87,7 @@ const mmap_region_t plat_regions[] = {
 	MAP_REGION_FLAT(HAILO_MAILBOX_BASE, PAGE_SIZE, MT_DEVICE | MT_RW | MT_SECURE),
 	MAP_REGION_FLAT(GICD_BASE, GICD_SIZE, MT_DEVICE | MT_RW | MT_SECURE),
 	MAP_REGION_FLAT(GICR_BASE, GICR_SIZE, MT_DEVICE | MT_RW | MT_SECURE),
-	MAP_REGION_FLAT(PLAT_CPU_RELEASE_ADDR, PAGE_SIZE, MT_DEVICE | MT_RW | MT_SECURE),
+	MAP_REGION_FLAT(PLAT_SCRATCH_PAGE, PAGE_SIZE, MT_DEVICE | MT_RW | MT_SECURE),
 	{0}
 };
 

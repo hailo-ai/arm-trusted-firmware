@@ -58,6 +58,8 @@ static void __dead2 hailo_scmi_system_off(int state)
 	 */
 	hailo_gic_cpuif_disable();
 
+	INFO("SCMI: sending system power state set, state=0x%x\n", state);
+
 	/*
 	 * Issue SCMI command. First issue a graceful
 	 * request and if that fails force the request.
@@ -87,4 +89,28 @@ void __dead2 hailo_scmi_sys_shutdown(void)
 void __dead2 hailo_scmi_sys_reboot(void)
 {
 	hailo_scmi_system_off(SCMI_SYS_PWR_COLD_RESET);
+}
+
+/*
+ * Notify the SCU that the system is entering suspend. Unlike shutdown/reboot
+ * this must return: the PSCI framework performs the actual power-down WFI for
+ * the calling core after pwr_domain_suspend() completes.
+ */
+void hailo_scmi_sys_suspend(void)
+{
+	int ret;
+
+	INFO("SCMI: sending system power state set, state=0x%x\n",
+	     SCMI_SYS_PWR_SUSPEND);
+
+	ret = scmi_sys_pwr_state_set(scmi_handle,
+			SCMI_SYS_PWR_FORCEFUL_REQ,
+			SCMI_SYS_PWR_SUSPEND);
+	if (ret != SCMI_E_SUCCESS) {
+		ERROR("SCMI system suspend request returned unexpected 0x%x\n",
+			ret);
+		panic();
+	}
+
+	INFO("SCMI: system suspend acknowledged by SCU\n");
 }
